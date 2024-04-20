@@ -148,6 +148,7 @@ class ConvertPlugin(BeetsPlugin):
                 "album_art_maxwidth": 0,
                 "delete_originals": False,
                 "playlist": None,
+                "refresh": False,
             }
         )
         self.early_import_stages = [self.auto_convert, self.auto_convert_keep]
@@ -169,6 +170,14 @@ class ConvertPlugin(BeetsPlugin):
             type="int",
             help="change the number of threads, \
                               defaults to maximum available processors",
+        )
+        cmd.parser.add_option(
+            "-r",
+            "--refresh",
+            action="store_true",
+            dest="refresh",
+            help="reconvert if original file is \
+                            newer than converted file",
         )
         cmd.parser.add_option(
             "-k",
@@ -247,11 +256,13 @@ class ConvertPlugin(BeetsPlugin):
                 hardlink,
                 link,
                 playlist,
+                refresh,
             ) = self._get_opts_and_config(empty_opts)
 
             items = task.imported_items()
             self._parallel_convert(
                 dest,
+                refresh,
                 False,
                 path_formats,
                 fmt,
@@ -332,6 +343,7 @@ class ConvertPlugin(BeetsPlugin):
     def convert_item(
         self,
         dest_dir,
+        refresh,
         keep_new,
         path_formats,
         fmt,
@@ -368,6 +380,23 @@ class ConvertPlugin(BeetsPlugin):
             if not pretend:
                 with _fs_lock:
                     util.mkdirall(dest)
+
+            # Delete existing destination files when original files have been
+            # modified since the last conversion. NOTE: Only when not using the
+            # --keep-new option because I'm not sure what to do in this case.
+            if ((refresh and not keep_new) and
+                (os.path.exists(util.syspath(dest))) and
+                (os.path.getmtime(util.syspath(item.path)) > os.path.getmtime(util.syspath(dest)))):
+                if pretend:
+                    self._log.info(
+                        "rm {0} (original file modified)",
+                        util.displayable_path(dest),
+                    )
+                else:
+                    self._log.info(
+                        "Removing {0} (original file modified)", util.displayable_path(dest)
+                    )
+                    util.remove(util.syspath(dest))
 
             if os.path.exists(util.syspath(dest)):
                 self._log.info(
@@ -563,6 +592,7 @@ class ConvertPlugin(BeetsPlugin):
             hardlink,
             link,
             playlist,
+            refresh,
         ) = self._get_opts_and_config(opts)
 
         if opts.album:
@@ -591,6 +621,7 @@ class ConvertPlugin(BeetsPlugin):
 
         self._parallel_convert(
             dest,
+            refresh,
             opts.keep_new,
             path_formats,
             fmt,
@@ -735,6 +766,11 @@ class ConvertPlugin(BeetsPlugin):
             hardlink = self.config["hardlink"].get(bool)
             link = self.config["link"].get(bool)
 
+        if opts.refresh is not None:
+            refresh = opts.refresh
+        else:
+            refresh = self.config["refresh"].get(bool)
+
         return (
             dest,
             threads,
@@ -744,11 +780,13 @@ class ConvertPlugin(BeetsPlugin):
             hardlink,
             link,
             playlist,
+            refresh,
         )
 
     def _parallel_convert(
         self,
         dest,
+        refresh,
         keep_new,
         path_formats,
         fmt,
@@ -763,7 +801,7 @@ class ConvertPlugin(BeetsPlugin):
         """
         convert = [
             self.convert_item(
-                dest, keep_new, path_formats, fmt, pretend, link, hardlink
+                dest, refresh, keep_new, path_formats, fmt, pretend, link, hardlink
             )
             for _ in range(threads)
         ]
