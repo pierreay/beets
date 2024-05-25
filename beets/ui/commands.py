@@ -1950,6 +1950,7 @@ default_commands.append(stats_cmd)
 
 
 def show_version(lib, opts, args):
+    print_("Fork by Pierre Ayoub (https://github.com/pierreay/beets) @ Development branch")
     print_("beets version %s" % beets.__version__)
     print_(f"Python version {python_version()}")
     # Show plugins.
