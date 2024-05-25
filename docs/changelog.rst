@@ -307,6 +307,8 @@ Bug fixes:
   :bug:`5130` 
 * :doc:`/plugins/convert`: Fix extension substitution inside path of the
   exported playlist.
+* :doc:`/plugins/convert`: Fix attempt to convert and perform side-effects if
+  library file is not readable.
 
 For plugin developers:
 
