@@ -20,9 +20,9 @@ import shlex
 import subprocess
 import tempfile
 import threading
-import mediafile
 from string import Template
 
+import mediafile
 from confuse import ConfigTypeError, Optional
 
 from beets import art, config, plugins, ui, util
@@ -365,7 +365,7 @@ class ConvertPlugin(BeetsPlugin):
             # to avoid any side-effect of the conversion (linking, keep_new,
             # refresh) if we already know that it will fail.
             try:
-                mf = mediafile.MediaFile(util.syspath(item.path))
+                mediafile.MediaFile(util.syspath(item.path))
             except mediafile.UnreadableFileError as exc:
                 self._log.error("Could not open file to convert: {0}", exc)
                 continue
