@@ -10,7 +10,7 @@ We will use `pipx` that will create a virtual environment for us.
 1. Perform a local clone of repository in a directory:
 
 ```bash
-mkdir ~/.local/src && git clone https://github.com/pierreay/beets ~/.local/src/beets
+mkdir -p ~/.local/src && git clone https://github.com/pierreay/beets ~/.local/src/beets
 ```
 
 2. Checkout my development branch containing my patches:
@@ -55,7 +55,7 @@ We will use `venv` to manage a virtual environment inside the development reposi
 1. Perform a local clone of repository in a directory:
 
 ```bash
-mkdir ~/.local/src && git clone https://github.com/pierreay/beets ~/.local/src/beets
+mkdir -p ~/.local/src && git clone https://github.com/pierreay/beets ~/.local/src/beets
 ```
 
 2. Checkout my development branch containing my patches:
