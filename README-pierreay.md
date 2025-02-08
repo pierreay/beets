@@ -38,6 +38,8 @@ pipx inject beets pyacoustid
 # https://github.com/beetbox/audioread/pull/145
 # https://github.com/youknowone/python-deadlib
 pipx inject beets standard-aifc standard-sunau
+# For `lyrics` plugin:
+pipx inject beets langdetect bs4
 ```
 
 Since it is not packaged by a distribution, the shell completions are not installed by default.
