@@ -24,9 +24,14 @@ New features:
   the library. This is useful when items have been imported in don't copy-move
   (`-C -M`) mode in the library but are later passed through the `convert`
   plugin which will regenerate new paths according to the Beets path format.
+* :doc:`plugins/lyrics`: Rewrite lyrics translation functionality to use Azure
+  AI Translator API and add relevant instructions to the documentation.
 
 Bug fixes:
 
+* :doc:`plugins/fetchart`: Fix fetchart bug where a tempfile could not be deleted due to never being
+  properly closed.
+  :bug:`5521`
 * :doc:`plugins/lyrics`: LRCLib will fallback to plain lyrics if synced lyrics
   are not found and `synced` flag is set to `yes`.
 * Synchronise files included in the source distribution with what we used to
@@ -88,6 +93,10 @@ Other changes:
   wrong (outdated) commit. Now the tag is created in the same workflow step
   right after committing the version update.
   :bug:`5539`
+* Added some typehints: ImportSession and Pipeline have typehints now. Should
+  improve useability for new developers.
+* :doc:`/plugins/smartplaylist`: URL-encode additional item `fields` within generated
+  EXTM3U playlists instead of JSON-encoding them.
 
 2.2.0 (December 02, 2024)
 -------------------------
