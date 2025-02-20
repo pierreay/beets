@@ -182,8 +182,7 @@ class ConvertPlugin(BeetsPlugin):
             "--refresh",
             action="store_true",
             dest="refresh",
-            help="reconvert if original file is \
-                            newer than converted file",
+            help="reconvert if original file is newer than converted file",
         )
         cmd.parser.add_option(
             "-k",
@@ -396,35 +395,24 @@ class ConvertPlugin(BeetsPlugin):
                 with _fs_lock:
                     util.mkdirall(dest)
 
-            # Delete existing destination files when original files have been
-            # modified since the last conversion. NOTE: Only when not using the
-            # --keep-new option because I'm not sure what to do in this case.
-            if (
-                (refresh and not keep_new)
-                and (os.path.exists(util.syspath(dest)))
-                and (
-                    os.path.getmtime(util.syspath(item.path))
-                    > os.path.getmtime(util.syspath(dest))
-                )
-            ):
-                if pretend:
-                    self._log.info(
-                        "rm {0} (original file modified)",
-                        util.displayable_path(dest),
-                    )
-                else:
+            if os.path.exists(dest):
+                # Delete existing destination files when original files have
+                # been modified since the last convert run.
+                if refresh and os.path.getmtime(original) > os.path.getmtime(
+                    dest
+                ):
                     self._log.info(
                         "Removing {0} (original file modified)",
                         util.displayable_path(dest),
                     )
-                    util.remove(util.syspath(dest))
-
-            if os.path.exists(util.syspath(dest)):
-                self._log.info(
-                    "Skipping {0} (target file exists)",
-                    util.displayable_path(item.path),
-                )
-                continue
+                    if not pretend:
+                        util.remove(dest)
+                else:
+                    self._log.info(
+                        "Skipping {0} (target file exists)",
+                        util.displayable_path(item.path),
+                    )
+                    continue
 
             if keep_new:
                 if pretend:
