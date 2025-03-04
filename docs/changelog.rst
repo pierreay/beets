@@ -21,6 +21,8 @@ New features:
   when fetching lyrics.
 * :doc:`plugins/lyrics`: Rewrite lyrics translation functionality to use Azure
   AI Translator API and add relevant instructions to the documentation.
+* :doc:`/plugins/convert`: Add new configuration option `convert.refresh` and
+  command-line option ``--refresh``.
 
 Bug fixes:
 
@@ -373,8 +375,6 @@ New features:
 * :doc:`/plugins/smartplaylist`: Add new config option `smartplaylist.fields`.
 * :doc:`/plugins/fetchart`: Defer source removal config option evaluation to
   the point where they are used really, supporting temporary config changes.
-* :doc:`/plugins/convert`: Add new configuration option `convert.refresh` and
-  command-line option ``--refresh``.
 
 Bug fixes:
 
