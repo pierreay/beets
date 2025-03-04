@@ -26,6 +26,8 @@ New features:
   plugin which will regenerate new paths according to the Beets path format.
 * :doc:`plugins/lyrics`: Rewrite lyrics translation functionality to use Azure
   AI Translator API and add relevant instructions to the documentation.
+* :doc:`/plugins/convert`: Add new configuration option `convert.refresh` and
+  command-line option ``--refresh``.
 
 Bug fixes:
 
@@ -80,6 +82,7 @@ Bug fixes:
 * :doc:`plugins/lyrics`: Fix plugin crash when ``genius`` backend returns empty
   lyrics.
   :bug:`5583`
+* ImageMagick 7.1.1-44 is now supported.
 
 For packagers:
 
