@@ -28,7 +28,7 @@ from confuse import ConfigTypeError, Optional
 from beets import art, config, plugins, ui, util
 from beets.library import Item, parse_query_string
 from beets.plugins import BeetsPlugin
-from beets.util import arg_encoding, par_map
+from beets.util import par_map
 from beets.util.artresizer import ArtResizer
 from beets.util.m3u import M3UFile
 
@@ -49,8 +49,6 @@ def replace_ext(path, ext):
 
     The new extension must not contain a leading dot.
     """
-    assert isinstance(path, bytes)
-    assert isinstance(ext, bytes)
     ext_dot = b"." + ext
     return os.path.splitext(path)[0] + ext_dot
 
@@ -296,7 +294,7 @@ class ConvertPlugin(BeetsPlugin):
         if not quiet and not pretend:
             self._log.info("Encoding {0}", util.displayable_path(source))
 
-        command = command.decode(arg_encoding(), "surrogateescape")
+        command = os.fsdecode(command)
         source = os.fsdecode(source)
         dest = os.fsdecode(dest)
 
@@ -310,7 +308,7 @@ class ConvertPlugin(BeetsPlugin):
                     "dest": dest,
                 }
             )
-            encode_cmd.append(args[i].encode(util.arg_encoding()))
+            encode_cmd.append(os.fsdecode(args[i]))
 
         if pretend:
             self._log.info("{0}", " ".join(ui.decargs(args)))
@@ -653,17 +651,14 @@ class ConvertPlugin(BeetsPlugin):
             # strings we get from item.destination to bytes.
             items_paths = [
                 os.path.relpath(
-                    util.bytestring_path(
-                        # Substitute the before-conversion file extension by
-                        # the after-conversion extension.
-                        replace_ext(
-                            item.destination(
-                                basedir=dest,
-                                path_formats=path_formats,
-                                fragment=False,
-                            ),
-                            get_format()[1],
-                        )
+                    # Substitute the before-conversion file extension by
+                    # the after-conversion extension.
+                    replace_ext(
+                        item.destination(
+                            basedir=dest,
+                            path_formats=path_formats
+                        ),
+                        get_format()[1],
                     ),
                     pl_dir,
                 )
